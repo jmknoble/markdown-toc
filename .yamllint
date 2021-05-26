@@ -1,0 +1,20 @@
+---
+# https://github.com/adrienverge/yamllint
+
+extends: default
+
+rules:
+  document-end: disable
+  document-start:
+    present: true
+    level: warning
+  indentation:
+    spaces: 2
+    indent-sequences: true
+  line-length:
+    allow-non-breakable-words: true
+    allow-non-breakable-inline-mappings: true
+    max: 120
+  truthy:
+    allowed-values: ["false", "true"]
+...

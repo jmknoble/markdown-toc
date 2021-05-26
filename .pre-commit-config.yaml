@@ -1,0 +1,82 @@
+---
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+
+default_language_version:
+  python: python3
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.4.0
+    hooks:
+      - id: check-added-large-files
+
+      - id: mixed-line-ending
+        alias: check-line-endings
+        name: check-line-endings
+        args: ['--fix=no']
+
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.26.1
+    hooks:
+      - id: yamllint
+
+  - repo: https://github.com/jmknoble/json-indent
+    rev: v2.4.1
+    hooks:
+      - id: json-indent
+        args: ['--changed', '--newlines=linux']
+
+  - repo: https://github.com/asottile/seed-isort-config
+    rev: v2.2.0
+    hooks:
+      - id: seed-isort-config
+        args:
+          - '--application-directories=hooks'
+          - '--exclude=(docs?|examples?|tests?|utils?|\{\{cookiecutter\.[^}]*\}\})/.*\.py'
+
+  - repo: https://github.com/pre-commit/mirrors-isort
+    rev: v5.8.0
+    hooks:
+      - id: isort
+
+  - repo: https://github.com/psf/black
+    rev: 21.5b0
+    hooks:
+      - id: black
+        alias: black-check
+        name: black-check
+        args: ['--check']
+        stages: [manual]
+
+      - id: black
+        alias: black-diff
+        name: black-diff
+        args: ['--check', '--diff']
+        stages: [manual]
+
+      - id: black
+        alias: black-reformat
+        name: black-reformat
+        args: []
+
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: 3.9.1
+    hooks:
+      - id: flake8
+
+  - repo: https://github.com/PyCQA/prospector
+    rev: 1.3.1
+    hooks:
+      - id: prospector
+        args: ['--profile=prospector_profile.yml']
+        # add any needed Python package requirements here
+        additional_dependencies:
+          - 'pytest>=4.6'
+
+  - repo: https://github.com/PyCQA/pydocstyle
+    rev: 6.0.0
+    hooks:
+      - id: pydocstyle
+        exclude: (__init__|setup|(docs?|examples?|tests?|utils?)/.*)\.py$
+...

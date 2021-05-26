@@ -1,0 +1,7 @@
+# https://pip.pypa.io/en/stable/cli/pip_install/#requirements-file-format
+#
+# setup.py will use the contents of this file
+# for `setup(tests_require=[...])`
+#
+# Add packages your project requires for unit testing here.
+

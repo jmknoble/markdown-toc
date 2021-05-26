@@ -1,0 +1,75 @@
+---
+# https://github.com/PyCQA/prospector
+
+inherits:
+  - flake8
+  - test_warnings
+  - doc_warnings
+
+strictness: medium
+
+ignore-patterns:
+  - ^setup.py$
+
+pylint:
+  run: true
+  disable:
+    - too-few-public-methods
+    - too-many-public-methods
+    - deprecated-lambda
+    - bad-builtin
+    - star-args
+    - global-statement
+    - assignment-from-none
+    - unused-format-string-key
+    - logging-format-interpolation
+    - len-as-condition
+    - logging-fstring-interpolation
+  options:
+    max-args: 10
+    max-locals: 15
+    max-returns: 6
+    max-branches: 15
+    max-statements: 60
+    min-public-methods: 1
+    max-public-methods: 20
+    max-line-length: 88
+    ignore-patterns:
+      - "test_.*?py"
+      - "^setup.py$"
+
+pep8:
+  options:
+    max-line-length: 88
+    hang-closing: false
+
+  disable:
+    - E266
+    - N811
+    - N812
+    - N813
+    - N814
+    - W503
+
+pyflakes:
+  disable:
+    # too many leading '#' for block comment
+    - E266
+    # line break before binary operator (Not PEP8 Compliant)
+    - W503
+
+pyroma:
+  run: false
+
+frosted:
+  run: false
+
+vulture:
+  run: false
+
+dodgy:
+  run: false
+
+mccabe:
+  run: false
+...
