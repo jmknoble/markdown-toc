@@ -286,11 +286,10 @@ def main(*argv):
     if args.stable_message is None:
         args.stable_message = project_version
 
-    base_tag_command = ["git", "tag", "-a"]
+    base_tag_command = ["git", "tag"]
 
     tag_command = list(base_tag_command)
-    tag_command.append("-m")
-    tag_command.append(args.message)
+    tag_command.extend(["-a", "-m", args.message])
 
     if args.rewrite_history:
         tag_command.append("--force")
@@ -312,7 +311,7 @@ def main(*argv):
                 )
                 return 1
 
-    tag_command.append(project_version)  # Correct, not a duplicate
+    tag_command.append(project_version)
 
     if args.commit is not None:
         tag_command.append(args.commit)
@@ -333,20 +332,17 @@ def main(*argv):
         return status
 
     if args.stable:
-        tag_command = list(base_tag_command)
-        tag_command.append("-m")
-        tag_command.append(args.stable_message)
-        tag_command.append("--force")
-        tag_command.append(args.stable_tag)
+        stable_tag_command = list(base_tag_command)
+        stable_tag_command.extend(["--force", args.stable_tag])
         if args.commit is not None:
-            tag_command.append(args.commit)
+            stable_tag_command.append(args.commit)
         runcommand.print_trace(
             ["Tagging", project_version, "as stable ..."],
             trace_prefix="",
             dry_run=args.dry_run,
         )
         status = runcommand.run_command(
-            tag_command,
+            stable_tag_command,
             check=False,
             show_trace=True,
             dry_run=args.dry_run,
