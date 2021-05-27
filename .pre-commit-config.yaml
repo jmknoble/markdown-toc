@@ -28,7 +28,7 @@ repos:
         args: ['--changed', '--newlines=linux']
 
   - repo: https://github.com/jmknoble/markdown-toc
-    rev: v0.1.2
+    rev: v0.2.0
     hooks:
       - id: markdown-toc
         args: ['--heading-level', '1', '--skip-level', '1']
