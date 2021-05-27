@@ -84,7 +84,7 @@ def _make_numbered_list_item(text, n):
 def _make_comment(text=None, label="comment"):
     comment_parts = []
     comment_parts.append("#")
-    if text is not None:
+    if text:
         comment_parts.append(" (")
         comment_parts.append(text)
         comment_parts.append(")")
