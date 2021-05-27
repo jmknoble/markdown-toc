@@ -27,6 +27,12 @@ repos:
       - id: json-indent
         args: ['--changed', '--newlines=linux']
 
+  - repo: https://github.com/jmknoble/markdown-toc
+    rev: v0.1.2
+    hooks:
+      - id: markdown-toc
+        args: ['--heading-level', '1', '--skip-level', '1']
+
   - repo: https://github.com/asottile/seed-isort-config
     rev: v2.2.0
     hooks:
