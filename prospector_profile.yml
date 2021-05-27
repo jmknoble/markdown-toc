@@ -25,6 +25,7 @@ pylint:
     - logging-format-interpolation
     - len-as-condition
     - logging-fstring-interpolation
+    - useless-object-inheritance
   options:
     max-args: 10
     max-locals: 15
