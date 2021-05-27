@@ -1,7 +1,1 @@
-# https://pip.pypa.io/en/stable/cli/pip_install/#requirements-file-format
-#
-# setup.py will use the contents of this file
-# for `setup(setup_requires=[...])`
-#
-# Add packages your project requires at build or development time here.
-
+Sphinx >= 3.0.4, < 4
