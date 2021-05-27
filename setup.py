@@ -54,7 +54,7 @@ PROVIDES = PACKAGES
 SCRIPTS = []
 
 # Auto-generated scripts with entry points
-SCRIPT_NAMES = []
+SCRIPT_NAMES = ["markdown-toc"]
 # or: SCRIPT_NAMES = ["markdown_toc"]
 
 SCRIPT_ALIASES = {}
@@ -90,7 +90,7 @@ SETUP_REQUIREMENTS = get_requirements_from_file(
 
 TEST_SUITE = "tests"
 
-KEYWORDS = "amazon aws cloud"
+KEYWORDS = "development markdown text"
 CLASSIFIERS = [
     # https://pypi.python.org/pypi?%3Aaction=list_classifiers
     "Development Status :: 3 - Alpha",
