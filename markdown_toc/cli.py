@@ -192,7 +192,7 @@ def _add_heading_arguments(parser):
         "--heading-text",
         action="store",
         default=DEFAULT_HEADING_TEXT,
-        help="Heading to use for table of contents (default: '{default}')".format(
+        help="Text of heading above table of contents (default: '{default}')".format(
             default=DEFAULT_HEADING_TEXT
         ),
     )
@@ -202,7 +202,7 @@ def _add_heading_arguments(parser):
         action="store",
         type=int,
         default=DEFAULT_HEADING_LEVEL,
-        help="Level of table of contents heading (default: {default})".format(
+        help="Level of heading above table of contents (default: {default})".format(
             default=DEFAULT_HEADING_LEVEL
         ),
     )
@@ -227,7 +227,7 @@ def _add_option_arguments(parser):
         action="store_true",
         default=DEFAULT_ADD_TRAILING_HEADING_CHARS,
         help=(
-            "Whether to add trailing '#' characters to the table of contents heading "
+            "Add trailing '#' characters to the table of contents heading "
             "(default: {default})"
         ).format(default=DEFAULT_ADD_TRAILING_HEADING_CHARS),
     )
@@ -238,7 +238,7 @@ def _add_option_arguments(parser):
         action="store_true",
         default=DEFAULT_ALT_LIST_CHAR,
         help=(
-            "Use alternate list character ('*') for entries in table of contents "
+            "Use alternate list character ('*') for table of contents entries "
             "(default: use '-')"
         ),
     )
@@ -247,9 +247,9 @@ def _add_option_arguments(parser):
         "--numbered",
         action="store_true",
         default=DEFAULT_NUMBERED,
-        help=(
-            "Add numbering to entries in table of contents (default: {default})"
-        ).format(default=DEFAULT_NUMBERED),
+        help=("Add numbering to table of contents entries (default: {default})").format(
+            default=DEFAULT_NUMBERED
+        ),
     )
 
 
@@ -261,7 +261,7 @@ def _add_comment_arguments(parser):
         action="store",
         default=None,
         help=(
-            "Comment to add to Markdown source next to table of contents heading "
+            "Comment to add to Markdown source near table of contents "
             "(default: auto-generated)"
         ),
     )
@@ -281,8 +281,8 @@ def _setup_args(argv):
     parser = argparsing.setup_argparse(
         prog=prog,
         description=(
-            "Add or update a Table of Contents in one or more "
-            "GitHub-Flavored Markdown documents"
+            "Add or update a table of contents in one or more "
+            "GitHub-flavored Markdown documents."
         ),
     )
     _add_file_arguments(parser)
