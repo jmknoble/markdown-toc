@@ -23,7 +23,7 @@ DESCRIPTION = (
 DEFAULT_TAG_PREFIX = "v"
 DEFAULT_TAG_SUFFIX = ""
 
-SAFETY_MESSAGES = [  # exactly 10 required
+SAFETY_MESSAGES = [
     "Make sure there are sufficient parallel universes available.",
     "Are you wearing your paradox protection headgear?",
     "Commit log may turn into a big ball of wibbly-wobbly, timey-wimey stuff.",
@@ -234,19 +234,26 @@ def _store_stable_version(version, stable_version_file, dry_run):
         if not dry_run:
             with open(stable_version_file, "w") as f:
                 f.write(version + "\n")
-        commit_command = [
-            "git",
-            "commit",
-            "-m",
-            "Update stable version to {version}".format(version=version),
-            stable_version_file,
-        ]
-        runcommand.run_command(
-            commit_command,
-            check=True,
+        status = runcommand.run_command(
+            ["git", "diff", "-s", "--exit-code", stable_version_file],
+            check=False,
             show_trace=True,
             dry_run=dry_run,
         )
+        if dry_run or status == 1:
+            commit_command = [
+                "git",
+                "commit",
+                "-m",
+                "Update stable version to {version}".format(version=version),
+                stable_version_file,
+            ]
+            runcommand.run_command(
+                commit_command,
+                check=True,
+                show_trace=True,
+                dry_run=dry_run,
+            )
 
 
 def main(*argv):
