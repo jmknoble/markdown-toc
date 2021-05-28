@@ -1,5 +1,11 @@
 # python-make-markdown-toc #
 
+[![EditorConfig-enabled](https://img.shields.io/badge/EditorConfig-enabled-brightgreen?logo=EditorConfig&logoColor=white)](https://editorconfig.org/)
+[![pre-commit-enabled](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+[![Python-3.6+](https://img.shields.io/badge/Python-3.6+-informational?logo=Python&logoColor=white)](https://www.python.org)
+[![CodeStyle-black](https://img.shields.io/badge/CodeStyle-black-informational)](https://github.com/psf/black)
+
+
 This is a Python script which will create a table of contents for a Markdown
 document using the headings in the document as in-document hypertext link
 references.
