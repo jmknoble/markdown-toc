@@ -5,6 +5,7 @@ from __future__ import print_function
 import os
 import os.path
 import random
+import subprocess
 import sys
 
 import utilutil.argparsing as argparsing
@@ -133,6 +134,11 @@ def _add_arguments(argparser):
         ),
     )
     argparser.add_argument(
+        "--push",
+        action="store_true",
+        help="Push the tags after creating them.",
+    )
+    argparser.add_argument(
         "-S",
         "--stable",
         dest="stable",
@@ -256,7 +262,7 @@ def _store_stable_version(version, stable_version_file, dry_run):
             )
 
 
-def main(*argv):
+def main(*argv):  # pylint: disable=too-many-branches
     """Do the thing"""
     (prog, argv) = argparsing.grok_argv(argv)
     argparser = argparsing.setup_argparse(prog=prog, description=DESCRIPTION)
@@ -316,39 +322,73 @@ def main(*argv):
     if args.commit is not None:
         tag_command.append(args.commit)
 
-    if args.stable:
-        # Must do this before tagging
-        _store_stable_version(
-            bare_project_version, args.stable_version_file, dry_run=args.dry_run
-        )
+    try:
+        if args.stable:
+            # Must do this before tagging
+            _store_stable_version(
+                bare_project_version, args.stable_version_file, dry_run=args.dry_run
+            )
 
-    status = runcommand.run_command(
-        tag_command,
-        check=False,
-        show_trace=True,
-        dry_run=args.dry_run,
-    )
-    if status != 0:
-        return status
-
-    if args.stable:
-        stable_tag_command = list(base_tag_command)
-        stable_tag_command.extend(["--force", args.stable_tag])
-        if args.commit is not None:
-            stable_tag_command.append(args.commit)
-        runcommand.print_trace(
-            ["Tagging", project_version, "as stable ..."],
-            trace_prefix="",
-            dry_run=args.dry_run,
-        )
-        status = runcommand.run_command(
-            stable_tag_command,
-            check=False,
+        runcommand.run_command(
+            tag_command,
+            check=True,
             show_trace=True,
             dry_run=args.dry_run,
         )
 
-    return status
+        if args.stable:
+            stable_tag_command = list(base_tag_command)
+            stable_tag_command.extend(["--force", args.stable_tag])
+            if args.commit is not None:
+                stable_tag_command.append(args.commit)
+            runcommand.print_trace(
+                ["Tagging", project_version, "as stable ..."],
+                trace_prefix="",
+                dry_run=args.dry_run,
+            )
+            runcommand.run_command(
+                stable_tag_command,
+                check=True,
+                show_trace=True,
+                dry_run=args.dry_run,
+            )
+
+        if args.push:
+            base_push_command = ["git", "push"]
+            if args.stable:
+                # Push updated stable version file
+                runcommand.run_command(
+                    base_push_command, check=True, show_trace=True, dry_run=args.dry_run
+                )
+
+            push_command = list(base_push_command)
+            if args.rewrite_history:
+                push_command.append("--force")
+            push_command.extend(
+                ["origin", "+refs/tags/{tag}".format(tag=project_version)]
+            )
+            runcommand.run_command(
+                push_command, check=True, show_trace=True, dry_run=args.dry_run
+            )
+
+            if args.stable:
+                push_command = list(base_push_command)
+                push_command.extend(
+                    [
+                        "--force",
+                        "origin",
+                        "+refs/tags/{tag}".format(tag=args.stable_tag),
+                    ]
+                )
+                runcommand.run_command(
+                    push_command, check=True, show_trace=True, dry_run=args.dry_run
+                )
+
+    except subprocess.CalledProcessError as e:
+        print("{prog}: error: {e}".format(prog=prog, e=e), file=sys.stderr)
+        return 1
+
+    return 0
 
 
 if __name__ == "__main__":
