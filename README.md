@@ -179,4 +179,4 @@ You can add arguments to the hook using the `args` keyword; for example:
  [GitHub-flavored Markdown]: https://github.github.com/gfm/
  [link reference definitions]: https://spec.commonmark.org/0.29/#link-reference-definitions
  [pre-commit]: https://github.com/pre-commit/pre-commit
- [README]: [README.md]
+ [README]: README.md
