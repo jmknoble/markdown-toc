@@ -24,6 +24,7 @@ REQUIREMENTS_PLAIN = "requirements.txt"
 REQUIREMENTS_DEV = os.path.join("dev", "requirements_dev.txt")
 REQUIREMENTS_FROZEN = "requirements_frozen.txt"
 REQUIREMENTS_BUILD = os.path.join("dev", "requirements_build.txt")
+REQUIREMENTS_PACKAGE = "{name}"
 
 COMMAND_CREATE = "create"
 COMMAND_REMOVE = "remove"
@@ -44,11 +45,13 @@ COMMANDS = {
 REQS_PLAIN = "plain"
 REQS_DEV = "dev"
 REQS_FROZEN = "frozen"
+REQS_PACKAGE = "package"
 
 REQS = [
     REQS_PLAIN,
     REQS_DEV,
     REQS_FROZEN,
+    REQS_PACKAGE,
 ]
 
 ENV_TYPE_VENV = "venv"
@@ -64,10 +67,22 @@ ENV_DESCRIPTIONS = {
     ENV_TYPE_CONDA: "conda environment {env_name}",
 }
 
-REQUIREMENTS_FILES = {
-    REQS_PLAIN: [REQUIREMENTS_PLAIN],
-    REQS_DEV: [REQUIREMENTS_PLAIN, REQUIREMENTS_BUILD, REQUIREMENTS_DEV],
-    REQS_FROZEN: [REQUIREMENTS_FROZEN],
+FROM_FILES = "files"
+FROM_PACKAGES = "packages"
+
+REQUIREMENTS = {
+    REQS_PLAIN: {
+        FROM_FILES: [REQUIREMENTS_PLAIN],
+    },
+    REQS_DEV: {
+        FROM_FILES: [REQUIREMENTS_PLAIN, REQUIREMENTS_BUILD, REQUIREMENTS_DEV],
+    },
+    REQS_FROZEN: {
+        FROM_FILES: [REQUIREMENTS_FROZEN],
+    },
+    REQS_PACKAGE: {
+        FROM_PACKAGES: [REQUIREMENTS_PACKAGE],
+    },
 }
 
 DEFAULT_ENV_TYPE = ENV_TYPE_VENV
@@ -117,7 +132,10 @@ def _add_arguments(argparser, reqs_required=False):
         action="store_const",
         dest="reqs",
         const=REQS_PLAIN,
-        help=f"Same as '--requirements {REQS_PLAIN}'",
+        help=(
+            f"Create virtual environment using {REQUIREMENTS_PLAIN}; "
+            f"same as '--requirements {REQS_PLAIN}'"
+        ),
     )
     reqs_mutex_group.add_argument(
         "-d",
@@ -125,7 +143,10 @@ def _add_arguments(argparser, reqs_required=False):
         action="store_const",
         dest="reqs",
         const=REQS_DEV,
-        help=f"Same as '--requirements {REQS_DEV}'",
+        help=(
+            f"Create virtual environment for development; "
+            f"same as '--requirements {REQS_DEV}'"
+        ),
     )
     reqs_mutex_group.add_argument(
         "-z",
@@ -133,7 +154,21 @@ def _add_arguments(argparser, reqs_required=False):
         action="store_const",
         dest="reqs",
         const=REQS_FROZEN,
-        help=f"Same as '--requirements {REQS_FROZEN}'",
+        help=(
+            f"Create virtual environment using {REQUIREMENTS_FROZEN}; "
+            f"same as '--requirements {REQS_FROZEN}'"
+        ),
+    )
+    reqs_mutex_group.add_argument(
+        "-P",
+        f"--{REQS_PACKAGE}",
+        action="store_const",
+        dest="reqs",
+        const=REQS_PACKAGE,
+        help=(
+            f"Create virtual environment using 'pip install PACKAGE'; "
+            f"same as '--requirements {REQS_PACKAGE}'"
+        ),
     )
 
     venv_group = argparser.add_argument_group(title="environment options")
@@ -183,21 +218,25 @@ def _progress(args, message, suffix="..."):
     )
 
 
-def _get_project_name(_args):
-    project_name = runcommand.run_command(
+def _get_package_name(_args):
+    package_name = runcommand.run_command(
         [PYTHON, "setup.py", "--name"],
         dry_run=False,
         return_output=True,
         show_trace=False,
     )
-    if project_name.endswith("\n"):
-        project_name = project_name[:-1]
-    return project_name.replace("_", "-")
+    if package_name.endswith("\n"):
+        package_name = package_name[:-1]
+    return package_name
 
 
-def _get_env_name(args):
+def _get_project_name(args):
+    return _get_package_name(args).replace("_", "-")
+
+
+def _get_env_name(name, args):
     if args.env_type == ENV_TYPE_CONDA:
-        env_name = _get_project_name(args)
+        env_name = name
         if args.reqs == REQS_DEV:
             env_name += DEV_SUFFIX
     else:
@@ -205,15 +244,17 @@ def _get_env_name(args):
     return env_name
 
 
-def _pip_requirements(requirements_files):
-    requirements = []
-    for a_file in requirements_files:
-        requirements.append("-r")
-        requirements.append(a_file)
-    return requirements
+def _pip_requirements(name, requirements):
+    pip_arguments = []
+    for a_file in requirements.get(FROM_FILES, []):
+        pip_arguments.append("-r")
+        pip_arguments.append(a_file)
+    for package_spec in requirements.get(FROM_PACKAGES, []):
+        pip_arguments.append(package_spec.format(name=name))
+    return pip_arguments
 
 
-def _create_venv(args, env_name, env_description, requirements):
+def _create_venv(args, name, env_name, env_description, requirements):
     _progress(args, f"Creating {env_description}")
 
     env_dir = env_name
@@ -250,7 +291,7 @@ def _create_venv(args, env_name, env_description, requirements):
         dry_run=args.dry_run,
     )
     runcommand.run_command(
-        pip_install_command + _pip_requirements(requirements),
+        pip_install_command + _pip_requirements(name, requirements),
         show_trace=True,
         dry_run=args.dry_run,
     )
@@ -314,7 +355,7 @@ def _get_conda_env_dir(args, env_name):
     raise IndexError(f"unable to find conda environment {env_name}")
 
 
-def _create_conda_env(args, env_name, env_description, requirements):
+def _create_conda_env(args, name, env_name, env_description, requirements):
     _progress(args, f"Creating {env_description}")
 
     conda_command = [CONDA, "create"]
@@ -334,7 +375,7 @@ def _create_conda_env(args, env_name, env_description, requirements):
 
     pip_install_command = [env_python, "-m", "pip", "install"]
     runcommand.run_command(
-        pip_install_command + _pip_requirements(requirements),
+        pip_install_command + _pip_requirements(name, requirements),
         show_trace=True,
         dry_run=args.dry_run,
     )
@@ -353,9 +394,9 @@ def _remove_conda_env(args, env_name, env_description):
     _progress(args, "Done.")
 
 
-def _check_requirements_files(requirements_files):
+def _check_requirements(requirements):
     missing = []
-    for requirements_file in requirements_files:
+    for requirements_file in requirements.get(FROM_FILES, []):
         if not os.path.exists(requirements_file):
             missing.append(requirements_file)
     if missing:
@@ -365,18 +406,20 @@ def _check_requirements_files(requirements_files):
 
 
 def _command_action_create(_prog, args, **_kwargs):
-    requirements_files = REQUIREMENTS_FILES[args.reqs]
-    _check_requirements_files(requirements_files)
-    env_name = _get_env_name(args)
+    requirements = REQUIREMENTS[args.reqs]
+    _check_requirements(requirements)
+    name = _get_project_name(args)
+    env_name = _get_env_name(name, args)
     env_description = ENV_DESCRIPTIONS[args.env_type].format(env_name=env_name)
     if args.env_type == ENV_TYPE_VENV:
-        _create_venv(args, env_name, env_description, requirements_files)
+        _create_venv(args, name, env_name, env_description, requirements)
     elif args.env_type == ENV_TYPE_CONDA:
-        _create_conda_env(args, env_name, env_description, requirements_files)
+        _create_conda_env(args, name, env_name, env_description, requirements)
 
 
 def _command_action_remove(_prog, args, **_kwargs):
-    env_name = _get_env_name(args)
+    name = _get_project_name(args)
+    env_name = _get_env_name(name, args)
     env_description = ENV_DESCRIPTIONS[args.env_type].format(env_name=env_name)
     if args.env_type == ENV_TYPE_VENV:
         _remove_venv(args, env_name, env_description)
