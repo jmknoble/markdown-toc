@@ -98,7 +98,7 @@ CLASSIFIERS = [
     "Environment :: Other Environment",
     "Intended Audience :: Developers",
     "Intended Audience :: Information Technology",
-    "License :: Other/Proprietary License",
+    "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
