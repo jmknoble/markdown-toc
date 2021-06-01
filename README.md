@@ -4,7 +4,7 @@
 [![pre-commit-enabled](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![Python-3.6+](https://img.shields.io/badge/Python-3.6+-informational?logo=Python&logoColor=white)](https://www.python.org)
 [![CodeStyle-black](https://img.shields.io/badge/CodeStyle-black-informational)](https://github.com/psf/black)
-[![pre-commit-hook-enabled](https://img.shields.io/badge/pre--commit--hook-enabled-brightgreen?logo=pre-commit&logoColor=white)](#pre-commit-hook)
+[![pre-commit-hook-included](https://img.shields.io/badge/pre--commit--hook-included-brightgreen?logo=pre-commit&logoColor=white)](#pre-commit-hook)
 
 
 A Python tool which creates a Table of Contents for a Markdown document using
