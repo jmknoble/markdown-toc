@@ -79,6 +79,7 @@ repos:
         # add any needed Python package requirements here
         additional_dependencies:
           - 'pytest>=4.6'
+          - 'argcomplete >= 1.12.3'
 
   - repo: https://github.com/PyCQA/pydocstyle
     rev: 6.1.1

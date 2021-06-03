@@ -1,7 +1,1 @@
-# https://pip.pypa.io/en/stable/cli/pip_install/#requirements-file-format
-#
-# setup.py will use the contents of this file
-# for `setup(install_requires=[...])`
-#
-# Add packages your project requires at runtime here.
-
+argcomplete >= 1.12.3

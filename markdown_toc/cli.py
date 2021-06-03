@@ -7,6 +7,8 @@ import difflib
 import os.path
 import sys
 
+import argcomplete
+
 from . import argparsing, iofile, mdfile
 
 ####################
@@ -296,6 +298,7 @@ def _setup_args(argv):
         action="store_true",
         help="Shortcut for '--inplace --changed' with static default comment",
     )
+    argcomplete.autocomplete(parser)
     args = parser.parse_args()
     return (prog, args)
 
