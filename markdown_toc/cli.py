@@ -9,7 +9,7 @@ import sys
 
 import argcomplete
 
-from . import argparsing, completion, iofile, mdfile
+from . import argparsing, completion, get_version, iofile, mdfile
 
 ####################
 
@@ -305,6 +305,7 @@ def _setup_args(argv):
             "GitHub-flavored Markdown documents."
         ),
     )
+
     _add_file_arguments(parser)
     _add_diff_arguments(parser)
     _add_newline_arguments(parser)
@@ -313,8 +314,11 @@ def _setup_args(argv):
     _add_comment_arguments(parser)
     _add_pre_commit_arguments(parser)
     _add_completion_arguments(parser)
+    parser.add_argument("-V", "--version", action="version", version=get_version(prog))
+
     argcomplete.autocomplete(parser)
     args = parser.parse_args()
+
     return (prog, args)
 
 

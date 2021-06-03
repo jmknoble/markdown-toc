@@ -13,5 +13,7 @@ __version__ = '0.3.0'
 # fmt: on
 
 
-def get_version():
-    return __version__
+def get_version(thing=None):
+    if thing is None:
+        return __version__
+    return "{thing} v{version}".format(thing=thing, version=__version__)
