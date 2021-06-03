@@ -22,13 +22,13 @@ repos:
       - id: yamllint
 
   - repo: https://github.com/jmknoble/json-indent
-    rev: v2.5.1
+    rev: v2.6.1
     hooks:
       - id: json-indent
         args: ['--newlines=linux']
 
   - repo: https://github.com/jmknoble/markdown-toc
-    rev: v0.2.4
+    rev: v0.2.5
     hooks:
       - id: markdown-toc
         args: ['--heading-level', '2', '--skip-level', '1']
@@ -47,7 +47,7 @@ repos:
       - id: isort
 
   - repo: https://github.com/psf/black
-    rev: 21.5b1
+    rev: 21.5b2
     hooks:
       - id: black
         alias: black-check
