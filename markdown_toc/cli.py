@@ -9,7 +9,7 @@ import sys
 
 import argcomplete
 
-from . import argparsing, iofile, mdfile
+from . import argparsing, completion, iofile, mdfile
 
 ####################
 
@@ -128,8 +128,8 @@ def _add_file_arguments(parser):
 
 
 def _add_diff_arguments(parser):
-    diff_group = parser.add_mutually_exclusive_group()
-    diff_group.add_argument(
+    diff_mutex_group = parser.add_mutually_exclusive_group()
+    diff_mutex_group.add_argument(
         "-C",
         "--changed",
         "--show-changed",
@@ -138,7 +138,7 @@ def _add_diff_arguments(parser):
         default=False,
         help="when used with '--inplace', note when a file has changed",
     )
-    diff_group.add_argument(
+    diff_mutex_group.add_argument(
         "-D",
         "--diff",
         "--show-diff",
@@ -147,21 +147,19 @@ def _add_diff_arguments(parser):
         default=False,
         help="when used with '--inplace', show differences when a file has changed",
     )
-    return diff_group
 
 
 def _add_newline_arguments(parser):
-    newlines_group = parser.add_mutually_exclusive_group()
-    newlines_group.add_argument(
+    newlines_mutex_group = parser.add_mutually_exclusive_group()
+    newlines_mutex_group.add_argument(
         "--newlines",
-        "--line-endings",
         dest="newlines",
         action="store",
         choices=ALL_NEWLINE_FORMATS,
         default=DEFAULT_NEWLINES,
         help="newline format (default: {})".format(DEFAULT_NEWLINES),
     )
-    newlines_group.add_argument(
+    newlines_mutex_group.add_argument(
         "-L",
         "--linux",
         dest="newlines",
@@ -169,7 +167,7 @@ def _add_newline_arguments(parser):
         const=NEWLINE_FORMAT_LINUX,
         help="same as '--newlines {}'".format(NEWLINE_FORMAT_LINUX),
     )
-    newlines_group.add_argument(
+    newlines_mutex_group.add_argument(
         "-M",
         "--microsoft",
         dest="newlines",
@@ -177,7 +175,7 @@ def _add_newline_arguments(parser):
         const=NEWLINE_FORMAT_MICROSOFT,
         help="same as '--newlines {}'".format(NEWLINE_FORMAT_MICROSOFT),
     )
-    newlines_group.add_argument(
+    newlines_mutex_group.add_argument(
         "-N",
         "--native",
         dest="newlines",
@@ -185,7 +183,6 @@ def _add_newline_arguments(parser):
         const=NEWLINE_FORMAT_NATIVE,
         help="same as '--newlines {}'".format(NEWLINE_FORMAT_NATIVE),
     )
-    return newlines_group
 
 
 def _add_heading_arguments(parser):
@@ -278,6 +275,27 @@ def _add_comment_arguments(parser):
     return comment_arg_group
 
 
+def _add_pre_commit_arguments(parser):
+    parser.add_argument(
+        "--pre-commit",
+        action="store_true",
+        help="Shortcut for '--inplace --changed' with static default comment",
+    )
+
+
+def _add_completion_arguments(parser):
+    parser.add_argument(
+        "--completion-help",
+        action="store_true",
+        help="Print instructions for enabling shell command-line autocompletion",
+    )
+    parser.add_argument(
+        "--bash-completion",
+        action="store_true",
+        help="Print autocompletion code for Bash-compatible shells to evaluate",
+    )
+
+
 def _setup_args(argv):
     (prog, argv) = argparsing.grok_argv(argv)
     parser = argparsing.setup_argparse(
@@ -293,11 +311,8 @@ def _setup_args(argv):
     _add_heading_arguments(parser)
     _add_option_arguments(parser)
     _add_comment_arguments(parser)
-    parser.add_argument(
-        "--pre-commit",
-        action="store_true",
-        help="Shortcut for '--inplace --changed' with static default comment",
-    )
+    _add_pre_commit_arguments(parser)
+    _add_completion_arguments(parser)
     argcomplete.autocomplete(parser)
     args = parser.parse_args()
     return (prog, args)
@@ -345,6 +360,17 @@ def _check_input_and_output_filenames(cli_args):
                 )
 
 
+def _check_completion_args(cli_args):
+    return any([cli_args.completion_help, cli_args.bash_completion])
+
+
+def _do_completion(cli_args, prog):
+    if cli_args.completion_help:
+        print(completion.get_instructions(prog, ["--bash-completion"]))
+    elif cli_args.bash_completion:
+        print(completion.get_commands(prog))
+
+
 def _check_pre_commit_args(cli_args):
     if not cli_args.pre_commit:
         return
@@ -373,6 +399,11 @@ def _set_default_comment(cli_args, prog, argv):
 def main(*argv):
     """Do the thing."""
     (prog, args) = _setup_args(argv)
+
+    if _check_completion_args(args):
+        _do_completion(args, prog)
+        return STATUS_SUCCESS
+
     _check_pre_commit_args(args)
     _check_diff_args(args)
     _check_newlines(args)
