@@ -10,6 +10,14 @@
 A Python tool which creates a Table of Contents for a Markdown document using
 the headings in the document as in-document hypertext link references.
 
+> [!WARNING]
+>
+> `markdown-toc` is deprecated due to similarly named packages.
+> As of v0.3.1, it will no longer be updated.
+>
+> markdown-toc's successor is [mark-toc](https://github.com/jmknoble/mark-toc).
+> Please switch your pre-commit hooks to use mark-toc going forward.
+
 [begintoc]: #
 
 ## Contents

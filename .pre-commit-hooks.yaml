@@ -2,7 +2,7 @@
 # https://pre-commit.com
 
 - id: markdown-toc
-  name: markdown-toc
+  name: markdown-toc (DEPRECATED, switch to github:jmknoble/mark-toc)
   description: This hook generates tables of contents in Markdown files.
   entry: markdown-toc --pre-commit
   language: python
