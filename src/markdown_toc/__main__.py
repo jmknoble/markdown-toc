@@ -6,11 +6,15 @@ import sys
 
 from . import cli
 
+__all__ = [
+    "main",
+]
+
 
 def main():
     """Provide a generic main entry point."""
-    sys.exit(cli.main(*sys.argv))
+    return cli.main(*sys.argv)
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

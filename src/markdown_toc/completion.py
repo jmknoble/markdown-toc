@@ -69,12 +69,13 @@ def _infer_full_prog(prog, with_module=False, with_relative=True, with_home=Fals
         if full_prog is None:
             full_prog = prog
 
-    # Command with either relative or absolute path
+    # Command with relative path
+    elif with_relative:
+        full_prog = prog
+
+    # Command with absolute path
     else:
-        if with_relative:
-            full_prog = prog
-        else:
-            full_prog = os.path.abspath(prog)
+        full_prog = os.path.abspath(prog)
 
     if with_home:
         full_prog = _contract_home(full_prog)

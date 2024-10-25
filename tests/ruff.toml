@@ -1,0 +1,16 @@
+[lint]
+extend-select = [
+    "W",  # warnings
+    # "N",  # pep8-naming
+    "I",  # isort
+    "S",  # flake8-bandit
+    "B",  # flake8-bugbear
+    "A",  # flake8-builtins
+    "YTT",  # flake8-2020
+    "PL",  # pylint
+    # "D",  # pydocstyle
+    # "UP",  # pyupgrade
+]
+ignore = [
+    "E266",  # multiple-leading-hashes-for-block-comment
+]

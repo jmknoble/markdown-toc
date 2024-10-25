@@ -4,17 +4,28 @@
 extends: default
 
 rules:
+  comments-indentation: disable
+
   document-end: disable
-  document-start:
-    present: true
-    level: warning
+  document-start: disable
+  # OR:
+  # document-start:
+  #   present: true
+
   indentation:
     spaces: 2
     indent-sequences: true
+    check-multi-line-strings: true
+
   line-length:
     allow-non-breakable-words: true
     allow-non-breakable-inline-mappings: true
     max: 120
+
+  quoted-strings:
+    quote-type: any
+    required: only-when-needed
+    extra-allowed: [".*"]
+
   truthy:
     allowed-values: ["false", "true"]
-...

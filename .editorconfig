@@ -15,10 +15,10 @@ end_of_line = lf
 
 # Text filetypes
 
-[*.md]
+[*.{md,markdown}]
 indent_style = space
 indent_size = 4
-max_line_length = 78
+max_line_length = 100
 trim_trailing_whitespace = false
 
 [*.rst]
@@ -51,13 +51,23 @@ end_of_line = lf
 indent_style = space
 indent_size = 4
 
+[*.{uml,plantuml,pu,puml,iuml}]
+indent_style = space
+indent_size = 4
+
 [*.{yaml,yml,cookiecutterrc,yamllint}]
 indent_style = space
 indent_size = 2
 
 # "Braceful" filetypes
 
-[*.{json,jsbeautifyrc}]
+[*.{json,jsbeautifyrc,css}]
+indent_style = space
+indent_size = 2
+
+# "Markup" filetypes
+
+[*.{htm,html,xml}]
 indent_style = space
 indent_size = 2
 

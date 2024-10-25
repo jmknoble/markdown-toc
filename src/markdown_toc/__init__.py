@@ -2,15 +2,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Imports, if any
-
-# fmt: off
-
-__author__ = 'jmknoble'
-__email__ = 'jmknoble@pobox.com'
-__version__ = '0.3.0'
-
-# fmt: on
+__version__ = "0.3.0"
 
 
 def get_version(thing=None):
